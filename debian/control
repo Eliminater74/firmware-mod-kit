@@ -9,7 +9,7 @@ Vcs-Git: ssh://git@git.kali.org/packages/firmware-mod-kit.git
 Vcs-Browser: http://git.kali.org/gitweb/?p=packages/firmware-mod-kit.git;a=summary
 
 Package: firmware-mod-kit
-Architecture: any
+Architecture: i386 amd64
 Depends: ${shlibs:Depends}, ${misc:Depends}, git, zlib1g-dev, liblzma-dev, python-magic
 Description: Deconstruct and reconstruct firmware images
  The Firmware Mod Kit allows for easy deconstruction and reconstruction of 
