@@ -12,6 +12,8 @@
 %:
 	dh $@ 
 
+override_dh_auto_clean:
+
 override_dh_auto_build:
 	cd src/ && ./configure && make
 
