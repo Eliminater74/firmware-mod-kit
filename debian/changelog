@@ -1,0 +1,5 @@
+firmware-mod-kit (0.99-1) unstable; urgency=low
+
+  * Initial release (Closes: #nnnn)  <nnnn is the bug number of your ITP>
+
+ -- Devon Kearns <dookie@localhost.localdomain>  Wed, 03 Jul 2013 09:10:03 -0600
