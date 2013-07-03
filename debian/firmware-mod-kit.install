@@ -1,0 +1,8 @@
+*.sh opt/firmware-mod-kit/trunk/
+*.inc opt/firmware-mod-kit/trunk/
+*.htm opt/firmware-mod-kit/trunk/
+deprecated opt/firmware-mod-kit/trunk/
+*.txt opt/firmware-mod-kit/trunk/
+ipk_template opt/firmware-mod-kit/trunk/
+other-scripts opt/firmware-mod-kit/trunk/
+src opt/firmware-mod-kit/trunk/

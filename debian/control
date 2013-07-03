@@ -1,15 +1,19 @@
 Source: firmware-mod-kit
-Section: unknown
+Section: utils
 Priority: extra
-Maintainer: Devon Kearns <dookie@localhost.localdomain>
-Build-Depends: debhelper (>= 8.0.0)
+Maintainer: Devon Kearns <dookie@kali.org>
+Build-Depends: debhelper (>= 8.0.0), git, zlib1g-dev, liblzma-dev, python-magic
 Standards-Version: 3.9.3
-Homepage: <insert the upstream URL, if relevant>
-#Vcs-Git: git://git.debian.org/collab-maint/firmware-mod-kit.git
-#Vcs-Browser: http://git.debian.org/?p=collab-maint/firmware-mod-kit.git;a=summary
+Homepage: https://code.google.com/p/firmware-mod-kit/
+Vcs-Git: ssh://git@git.kali.org/packages/firmware-mod-kit.git
+Vcs-Browser: http://git.kali.org/gitweb/?p=packages/firmware-mod-kit.git;a=summary
 
 Package: firmware-mod-kit
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
-Description: <insert up to 60 chars description>
- <insert long description, indented with spaces>
+Depends: ${shlibs:Depends}, ${misc:Depends}, git, zlib1g-dev, liblzma-dev, python-magic
+Description: Deconstruct and reconstruct firmware images
+ The Firmware Mod Kit allows for easy deconstruction and reconstruction of 
+ firmware images for various embedded devices. While it primarily targets Linux 
+ based routers, it should be compatible with most firmware that makes use of 
+ common firmware formats and file systems such as TRX/uImage and 
+ SquashFS/CramFS.

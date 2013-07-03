@@ -1,0 +1,2 @@
+version=3
+http://code.google.com/p/firmware-mod-kit/downloads/list?can=1 .*/fmk_(\d[\d]*)\.(?:zip|tgz|tbz2|txz|tar\.gz|tar\.bz2|tar\.xz)
