@@ -1,3 +1,9 @@
+firmware-mod-kit (0.99-1kali1) kali; urgency=low
+
+  * Override dh_shlibdeps to fix 64-bit build
+
+ -- Devon Kearns <dookie@kali.org>  Wed, 03 Jul 2013 09:53:46 -0600
+
 firmware-mod-kit (0.99-1kali0) kali; urgency=low
 
   * Initial release (Closes: #0000251)  

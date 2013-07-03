@@ -21,3 +21,5 @@ override_dh_auto_build:
 
 override_dh_auto_install:
 	dh_installdirs
+
+override_dh_shlibdeps:
