@@ -1,7 +1,7 @@
 Source: firmware-mod-kit
 Section: utils
 Priority: extra
-Maintainer: Devon Kearns <dookie@kali.org>
+Maintainer: Kali Developers <devel@kali.org>
 Build-Depends: debhelper (>= 8.0.0), git, zlib1g-dev, liblzma-dev, python-magic
 Standards-Version: 3.9.3
 Homepage: https://code.google.com/p/firmware-mod-kit/
