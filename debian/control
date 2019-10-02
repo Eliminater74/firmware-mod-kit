@@ -2,7 +2,7 @@ Source: firmware-mod-kit
 Section: utils
 Priority: extra
 Maintainer: Kali Developers <devel@kali.org>
-Build-Depends: debhelper (>= 8.0.0), git, zlib1g-dev, liblzma-dev, python-magic
+Build-Depends: debhelper (>= 8.0.0), git, zlib1g-dev, liblzma-dev, python3-magic
 Standards-Version: 3.9.3
 Homepage: https://github.com/rampageX/firmware-mod-kit
 Vcs-Git: https://gitlab.com/kalilinux/packages/firmware-mod-kit.git
@@ -10,7 +10,7 @@ Vcs-Browser: https://gitlab.com/kalilinux/packages/firmware-mod-kit
 
 Package: firmware-mod-kit
 Architecture: i386 amd64
-Depends: ${shlibs:Depends}, ${misc:Depends}, git, zlib1g-dev, liblzma-dev, python-magic
+Depends: ${shlibs:Depends}, ${misc:Depends}, git, zlib1g-dev, liblzma-dev, python3-magic
 Description: Deconstruct and reconstruct firmware images
  The Firmware Mod Kit allows for easy deconstruction and reconstruction of 
  firmware images for various embedded devices. While it primarily targets Linux 
