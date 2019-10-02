@@ -4,7 +4,7 @@ Priority: extra
 Maintainer: Kali Developers <devel@kali.org>
 Build-Depends: debhelper (>= 8.0.0), git, zlib1g-dev, liblzma-dev, python-magic
 Standards-Version: 3.9.3
-Homepage: https://code.google.com/p/firmware-mod-kit/
+Homepage: https://github.com/rampageX/firmware-mod-kit
 Vcs-Git: https://gitlab.com/kalilinux/packages/firmware-mod-kit.git
 Vcs-Browser: https://gitlab.com/kalilinux/packages/firmware-mod-kit
 

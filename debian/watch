@@ -1,2 +1,4 @@
-version=3
-http://code.google.com/p/firmware-mod-kit/downloads/list?can=1 .*/fmk_(\d[\d]*)\.(?:zip|tgz|tbz2|txz|tar\.gz|tar\.bz2|tar\.xz)
+version=4
+opts="filenamemangle=s%(?:.*?)?v?(\d[\d.]*)\.tar\.gz%firmware-mod-kit-$1.tar.gz%" \
+    https://github.com/rampageX/firmware-mod-kit/tags \
+    (?:.*?/)?v?(\d[\d.]*)\.tar\.gz debian uupdate

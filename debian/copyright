@@ -1,6 +1,6 @@
 Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: firmware-mod-kit
-Source: https://code.google.com/p/firmware-mod-kit/
+Source: https://github.com/rampageX/firmware-mod-kit
 
 Files: *
 Copyright: <jeremy.collake@gmail.com>
