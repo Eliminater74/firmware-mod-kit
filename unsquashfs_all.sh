@@ -16,6 +16,7 @@ SUBDIRS="squashfs-2.1-r2 \
 squashfs-3.0 \
 squashfs-3.0-lzma-damn-small-variant \
 others/squashfs-2.0-nb4 \
+others/squashfs-2.2-r2-7z \
 others/squashfs-3.0-e2100 \
 others/squashfs-3.2-r2 \
 others/squashfs-3.2-r2-lzma \
@@ -33,9 +34,8 @@ others/squashfs-4.2 \
 others/squashfs-4.0-lzma \
 others/squashfs-4.0-realtek \
 others/squashfs-hg55x-bin"
-TIMEOUT="15"
+TIMEOUT="60"
 MKFS=""
-DEST=""
 
 function wait_for_complete()
 {
@@ -69,24 +69,23 @@ fi
 if [ "$DIR" == "" ]
 then
 	BDIR="./squashfs-root"
-	DIR=$BDIR
+	DIR="$BDIR"
 	I=1
 
-	while [ -e $DIR ]
+	while [ -e "$DIR" ]
 	do
-		DIR=$BDIR-$I
+		DIR="$BDIR-$I"
 		((I=$I+1))
 	done
 fi
 
-IMG=$(readlink -f $IMG)
-DIR=$(readlink -f $DIR)
+IMG=$(readlink -f "$IMG")
+DIR=$(readlink -f "$DIR")
 
 # Make sure we're operating out of the FMK directory
-cd $(dirname $(readlink -f $0))
+cd $(dirname $(readlink -f "$0"))
 
-DEST="-dest $DIR"
-MAJOR=$(./src/binwalk-1.0/src/bin/binwalk-script -m ./src/binwalk-*/src/magic.binwalk -l 1 "$IMG" | head -4 | tail -1 | sed -e 's/.*version //' | cut -d'.' -f1)
+MAJOR=$(./src/binwalk-2.1.1/src/scripts/binwalk -l 1024 "$IMG" | head -4 | tail -1 | sed -e 's/.*version //' | cut -d'.' -f1)
 
 echo -e "Attempting to extract SquashFS $MAJOR.X file system...\n"
 
@@ -104,18 +103,18 @@ do
 	if [ -e $unsquashfs-lzma ]; then
 		echo -ne "\nTrying $unsquashfs-lzma... "
 
-		$unsquashfs-lzma $DEST $IMG 2>/dev/null &
+		$unsquashfs-lzma -dest "$DIR" "$IMG" 2>/dev/null &
 		#sleep $TIMEOUT && kill $! 1>&2 >/dev/null
 		wait_for_complete $unsquashfs-lzma
 		
 		if [ -d "$DIR" ]
                 then
-			if [ "$(ls $DIR)" != "" ]
+			if [ "$(ls "$DIR")" != "" ]
 			then
 				# Most systems will have busybox - make sure it's a non-zero file size
 				if [ -e "$DIR/bin/sh" ]
 				then
-					if [ "$(wc -c $DIR/bin/sh | cut -d' ' -f1)" != "0" ]
+					if [ "$(wc -c "$DIR/bin/sh" | cut -d' ' -f1)" != "0" ]
 					then
 						MKFS="$mksquashfs-lzma"
 					fi
@@ -133,18 +132,18 @@ do
 	if [ "$MKFS" == "" ] && [ -e $unsquashfs ]; then
 		echo -ne "\nTrying $unsquashfs... "
 
-		$unsquashfs $DEST $IMG 2>/dev/null &
+		$unsquashfs -dest "$DIR" "$IMG" 2>/dev/null &
 		#sleep $TIMEOUT && kill $! 1>&2 >/dev/null
 		wait_for_complete $unsquashfs
 
 		if [ -d "$DIR" ]
 		then
-			if [ "$(ls $DIR)" != "" ]
+			if [ "$(ls "$DIR")" != "" ]
 			then
 				# Most systems will have busybox - make sure it's a non-zero file size
 				if [ -e "$DIR/bin/sh" ]
 				then
-					if [ "$(wc -c $DIR/bin/sh | cut -d' ' -f1)" != "0" ]
+					if [ "$(wc -c "$DIR/bin/sh" | cut -d' ' -f1)" != "0" ]
 					then
 						MKFS="$mksquashfs"
 					fi

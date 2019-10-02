@@ -16,8 +16,8 @@ else
 	SUDO=""
 fi
 
-IMG=$(readlink -f $IMG)
-DIR=$(readlink -f $DIR)
+IMG=$(readlink -f "$IMG")
+DIR=$(readlink -f "$DIR")
 
 # Make sure we're operating out of the FMK directory
 cd $(dirname $(readlink -f $0))
@@ -97,6 +97,8 @@ for LINE in IFS='
 		# Check for compression type of the file system. Default to LZMA
 		if [ "$(echo ${LINE} | grep -i 'gzip')" != "" ];  then
 			FS_COMPRESSION="gzip"
+		elif [ "$(echo ${LINE} | grep -i 'xz')" != "" ];  then
+			FS_COMPRESSION="xz"
 		else
 			FS_COMPRESSION="lzma"
 		fi
@@ -177,7 +179,41 @@ echo "ENDIANESS='${ENDIANESS}'" >> ${CONFLOG}
 case ${FS_TYPE} in
 	"squashfs")
 		echo "Extracting squashfs files..."
-		${SUDO} ./unsquashfs_all.sh "${FSIMG}" "${ROOTFS}" 2>/dev/null | grep MKFS >> "${CONFLOG}"
+		FS_ARGS=""
+		FS_MKFS=$(${SUDO} ./unsquashfs_all.sh "${FSIMG}" "${ROOTFS}" 2>/dev/null | grep MKFS)
+		echo ${FS_MKFS} >> "${CONFLOG}"
+		MKFS=$(echo ${FS_MKFS} | awk  -F"[=]" '{print $2}' | sed 's/\"//g')
+		if [ "${MKFS}" != "" ]; then
+		    MKFS_DIR=$(dirname ${MKFS})
+		    UNSQUASHFS="${MKFS_DIR}/unsquashfs"
+		    if [ "${UNSQUASHFS}" != "" ]; then
+		        #Xattrs are not stored
+		        Xattrs=$(${UNSQUASHFS} -s ${FSIMG} | grep -i Xattrs)
+		        if [ "${Xattrs}" != "" ]; then
+		            if [ "$(echo ${Xattrs} | grep -i not)" != "" ]; then
+		                echo "COMP_XZ_XATTRS='-no-xattrs'" >> ${CONFLOG}
+		            fi
+		        fi
+		        #Number of ids 5
+		        NumOfIds=$(${UNSQUASHFS} -s ${FSIMG} | grep -i "Number of ids")
+		        if [ "${NumOfIds}" != "" ]; then
+		            if [ "$(echo ${NumOfIds} | grep -P '\d+' -o)" = "1" ]; then
+		                echo "COMP_XZ_ALL_ROOT='-all-root'" >> ${CONFLOG}
+		            fi
+		        fi		
+		    fi	
+		fi
+		if [ "${FS_COMPRESSION}" = "xz" ]; then
+		    if [ "$(echo $MKFS | grep 'squashfs-4.2')" != "" ]; then
+		        typeset -u XZ_MAGIC
+		        #FD377A585A xz block magic 7zXZ, '-noappend' offset is 96 without '-noappend' offeset is 106
+		        XZ_MAGIC=$(dd if="${FSIMG}" bs=1 count=5 skip=96 2>/dev/zero | xxd -p)
+		        if [ "${XZ_MAGIC}" = "FD377A585A" ]; then
+		            FS_ARGS="${FS_ARGS} -noappend"
+		            echo "FS_ARGS='${FS_ARGS}'" >> ${CONFLOG}		        		        
+		        fi		        
+		    fi
+		fi
 		;;
 	"cramfs")
 		echo "Extracting CramFS file system..."
@@ -187,6 +223,16 @@ case ${FS_TYPE} in
 		echo "Extracting YAFFS file system..."
 		${SUDO} ./src/yaffs2utils/unyaffs2 "${FSIMG}" "${ROOTFS}" 2>/dev/null 
 		echo "MKFS='./src/yaffs2utils/mkyaffs2'" >> "${CONFLOG}"
+		;;
+	"jffs2")
+		echo "Extracting JFFS2 file system..."
+		${SUDO} ./src/jffs2/unjffs2 "${FSIMG}" 1>&2 2>/dev/null
+		# unjffs2 extracts to hard-coded directory of 'rootfs'
+		if [ -e "rootfs" ]
+		then
+			${SUDO} mv rootfs "${ROOTFS}"
+		fi
+		echo "MKFS='./src/jffs2/mkjffs2'" >> "${CONFLOG}"
 		;;
 	*)
 		echo "Unsupported file system '${FS_TYPE}'! Quitting..."
