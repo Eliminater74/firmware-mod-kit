@@ -1,3 +1,22 @@
+firmware-mod-kit (0.99+git20190714-0kali1) kali-dev; urgency=medium
+
+  [ Raphaël Hertzog ]
+  * Update Maintainer field
+  * Update Vcs-* fields for the move to gitlab.com
+  * Add GitLab's CI configuration file
+  * Configure git-buildpackage for Kali
+  * Update URL in GitLab's CI configuration file
+
+  [ Sophie Brun ]
+  * Update homepage
+  * New upstream version 0.99+git20190714
+  * Add documentation
+  * Switch to Python 3
+  * Use debhelper-compat 12
+  * Bump Standards-Version to 4.4.0
+
+ -- Sophie Brun <sophie@offensive-security.com>  Wed, 02 Oct 2019 17:31:00 +0200
+
 firmware-mod-kit (0.99-1kali2) kali; urgency=low
 
   * Changed arch to i386 and amd64
