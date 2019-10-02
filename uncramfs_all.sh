@@ -58,11 +58,37 @@ fi
 
 if [ -e "$FSIMG.le" ]
 then
-	# If this is an OpenRG firmware, try uncramfs-lzma first.
-	if [ "$(strings "$FSIMG.le" | grep openrg)" != "" ]
+	# Try uncramfs-lzma first. If the LZMA decompression fails, it will exit with an error code.
+	./src/uncramfs-lzma/uncramfs-lzma "$ROOTFS" "$FSIMG.le" 2>/dev/null
+	if [ $? -eq 0 ]
 	then
-		./src/uncramfs-lzma/uncramfs-lzma "$ROOTFS" "$FSIMG.le" 2>/dev/null
-		if [ $? -eq 0 ]
+		nfiles=0
+		bad=0
+
+		# Check at least the first five files to make sure they didn't just extract to all zero's
+		for FILE in $(find "$ROOTFS")
+		do
+			if [ -f "$FILE" ]
+			then
+				echo "Checking $FILE"
+
+				if [ "$(hexdump "$FILE" | wc -l)" -lt "4" ] && [ "$(hexdump "$FILE" | head -1 | grep -v '0')" == "" ]
+				then
+					((bad=$bad+1))
+				else
+					((bad=$bad-1))
+				fi
+
+				((nfiles=nfiles+1))
+			fi
+
+			if [ "$nfiles" == "5" ]
+			then
+				break
+			fi
+		done
+
+		if [ "$bad" != "$nfiles" ]
 		then
 			# Does not exist, will not be able to re-build the file system!
 			MKFS="./src/uncramfs-lzma/mkcramfs-lzma"
@@ -83,15 +109,6 @@ then
 	if [ $? -eq 0 ]
 	then
 		MKFS="./src/cramfs-2.x/mkcramfs"
-		finish
-		exit 0
-	fi
-
-	./src/uncramfs-lzma/uncramfs-lzma "$ROOTFS" "$FSIMG.le" 2>/dev/null
-	if [ $? -eq 0 ]
-	then
-		# Does not exist, will not be able to re-build the file system!
-		MKFS="./src/uncramfs-lzma/mkcramfs-lzma"
 		finish
 		exit 0
 	fi
