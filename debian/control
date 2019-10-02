@@ -1,9 +1,9 @@
 Source: firmware-mod-kit
 Section: utils
-Priority: extra
+Priority: optional
 Maintainer: Kali Developers <devel@kali.org>
 Build-Depends: debhelper-compat (= 12), git, zlib1g-dev, liblzma-dev, python3-magic
-Standards-Version: 3.9.3
+Standards-Version: 4.4.0
 Homepage: https://github.com/rampageX/firmware-mod-kit
 Vcs-Git: https://gitlab.com/kalilinux/packages/firmware-mod-kit.git
 Vcs-Browser: https://gitlab.com/kalilinux/packages/firmware-mod-kit
