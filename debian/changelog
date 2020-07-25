@@ -31,6 +31,6 @@ firmware-mod-kit (0.99-1kali1) kali; urgency=low
 
 firmware-mod-kit (0.99-1kali0) kali; urgency=low
 
-  * Initial release (Closes: #0000251)  
+  * Initial release (Closes: #0000251)
 
  -- Devon Kearns <dookie@kali.org>  Wed, 03 Jul 2013 09:10:03 -0600
