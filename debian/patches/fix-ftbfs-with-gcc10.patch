@@ -1,0 +1,498 @@
+From c1362ed3578b956ce8b25166bfc9232c1185cdee Mon Sep 17 00:00:00 2001
+From: Hyunhong Kim <pol4bear@gmail.com>
+Date: Sun, 10 Oct 2021 21:52:13 -0700
+Subject: [PATCH] Fix build error on gcc-10
+
+---
+ src/others/squashfs-2.0-nb4/nb4-mksquashfs/squashfs/read_fs.c   | 2 +-
+ src/others/squashfs-3.0-e2100/mksquashfs.c                      | 2 +-
+ src/others/squashfs-3.0-e2100/read_fs.c                         | 2 +-
+ .../squashfs3.2-r2/squashfs-tools/mksquashfs.c                  | 2 +-
+ .../squashfs3.2-r2/squashfs-tools/read_fs.c                     | 2 +-
+ .../squashfs3.2-r2/squashfs-tools/mksquashfs.c                  | 2 +-
+ .../squashfs3.2-r2/squashfs-tools/read_fs.c                     | 2 +-
+ src/others/squashfs-3.2-r2-rtn12/mksquashfs.c                   | 2 +-
+ src/others/squashfs-3.2-r2-rtn12/read_fs.c                      | 2 +-
+ src/others/squashfs-3.2-r2-wnr1000/mksquashfs.c                 | 2 +-
+ src/others/squashfs-3.2-r2-wnr1000/read_fs.c                    | 2 +-
+ src/others/squashfs-3.2-r2/mksquashfs.c                         | 2 +-
+ src/others/squashfs-3.2-r2/read_fs.c                            | 2 +-
+ .../squashfs3.3/squashfs-tools/mksquashfs.c                     | 2 +-
+ .../squashfs-3.3-grml-lzma/squashfs3.3/squashfs-tools/read_fs.c | 2 +-
+ .../squashfs-3.3-lzma/squashfs3.3/squashfs-tools/mksquashfs.c   | 2 +-
+ .../squashfs-3.3-lzma/squashfs3.3/squashfs-tools/read_fs.c      | 2 +-
+ src/others/squashfs-3.3/mksquashfs.c                            | 2 +-
+ src/others/squashfs-3.3/read_fs.c                               | 2 +-
+ src/others/squashfs-3.4-cisco/squashfs-tools/mksquashfs.c       | 2 +-
+ src/others/squashfs-3.4-cisco/squashfs-tools/read_fs.c          | 2 +-
+ .../squashfs-3.4-nb4/squashfs3.4/squashfs-tools/mksquashfs.c    | 2 +-
+ .../squashfs-3.4-nb4/squashfs3.4/squashfs-tools/read_fs.c       | 2 +-
+ .../squashfs-3.4-nb4/squashfs3.4/squashfs-tools/unsquashfs.c    | 2 +-
+ src/others/squashfs-4.0-lzma/mksquashfs.c                       | 2 +-
+ src/others/squashfs-4.0-realtek/mksquashfs.c                    | 2 +-
+ src/others/squashfs-4.2-official/mksquashfs.c                   | 2 +-
+ src/others/squashfs-4.2/squashfs-tools/mksquashfs.c             | 2 +-
+ src/squashfs-2.1-r2/read_fs.c                                   | 2 +-
+ src/squashfs-3.0-lzma-damn-small-variant/mksquashfs.c           | 2 +-
+ src/squashfs-3.0-lzma-damn-small-variant/read_fs.c              | 2 +-
+ src/squashfs-3.0/mksquashfs.c                                   | 2 +-
+ src/squashfs-3.0/read_fs.c                                      | 2 +-
+ src/webcomp-tools/common.c                                      | 2 ++
+ src/webcomp-tools/common.h                                      | 2 +-
+ 35 files changed, 36 insertions(+), 34 deletions(-)
+
+diff --git a/src/others/squashfs-2.0-nb4/nb4-mksquashfs/squashfs/read_fs.c b/src/others/squashfs-2.0-nb4/nb4-mksquashfs/squashfs/read_fs.c
+index aef471f..53ede28 100644
+--- a/src/others/squashfs-2.0-nb4/nb4-mksquashfs/squashfs/read_fs.c
++++ b/src/others/squashfs-2.0-nb4/nb4-mksquashfs/squashfs/read_fs.c
+@@ -53,7 +53,7 @@ extern int add_file(int, int, unsigned int *, int, unsigned int, int, int);
+ 
+ #define ERROR(s, args...)		fprintf(stderr, s, ## args)
+ 
+-int swap;
++extern int swap;
+ 
+ int read_block(int fd, int start, int *next, unsigned char *block, squashfs_super_block *sBlk)
+ {
+diff --git a/src/others/squashfs-3.0-e2100/mksquashfs.c b/src/others/squashfs-3.0-e2100/mksquashfs.c
+index 5a234ac..e3256ac 100755
+--- a/src/others/squashfs-3.0-e2100/mksquashfs.c
++++ b/src/others/squashfs-3.0-e2100/mksquashfs.c
+@@ -1347,7 +1347,7 @@ struct inode_info *lookup_inode(struct stat *buf)
+ }
+ 
+ 
+-inline void add_dir_entry(char *name, char *pathname, struct dir_info *sub_dir, struct inode_info *inode_info, void *data, struct dir_info *dir)
++static inline void add_dir_entry(char *name, char *pathname, struct dir_info *sub_dir, struct inode_info *inode_info, void *data, struct dir_info *dir)
+ {
+ 	if((dir->count % DIR_ENTRIES) == 0)
+ 		if((dir->list = realloc(dir->list, (dir->count + DIR_ENTRIES) * sizeof(struct dir_ent *))) == NULL)
+diff --git a/src/others/squashfs-3.0-e2100/read_fs.c b/src/others/squashfs-3.0-e2100/read_fs.c
+index 2041592..9cfad4a 100755
+--- a/src/others/squashfs-3.0-e2100/read_fs.c
++++ b/src/others/squashfs-3.0-e2100/read_fs.c
+@@ -61,7 +61,7 @@ extern int add_file(long long, long long, unsigned int *, int, unsigned int, int
+ 						fprintf(stderr, s, ## args); \
+ 					} while(0)
+ 
+-int swap;
++extern int swap;
+ 
+ int read_block(int fd, long long start, long long *next, unsigned char *block, squashfs_super_block *sBlk)
+ {
+diff --git a/src/others/squashfs-3.2-r2-hg612-lzma/squashfs3.2-r2/squashfs-tools/mksquashfs.c b/src/others/squashfs-3.2-r2-hg612-lzma/squashfs3.2-r2/squashfs-tools/mksquashfs.c
+index 371b7e2..1352dc0 100644
+--- a/src/others/squashfs-3.2-r2-hg612-lzma/squashfs3.2-r2/squashfs-tools/mksquashfs.c
++++ b/src/others/squashfs-3.2-r2-hg612-lzma/squashfs3.2-r2/squashfs-tools/mksquashfs.c
+@@ -2205,7 +2205,7 @@ struct inode_info *lookup_inode(struct stat *buf)
+ }
+ 
+ 
+-inline void add_dir_entry(char *name, char *pathname, struct dir_info *sub_dir, struct inode_info *inode_info, void *data, struct dir_info *dir)
++static inline void add_dir_entry(char *name, char *pathname, struct dir_info *sub_dir, struct inode_info *inode_info, void *data, struct dir_info *dir)
+ {
+ 	if((dir->count % DIR_ENTRIES) == 0)
+ 		if((dir->list = realloc(dir->list, (dir->count + DIR_ENTRIES) * sizeof(struct dir_ent *))) == NULL)
+diff --git a/src/others/squashfs-3.2-r2-hg612-lzma/squashfs3.2-r2/squashfs-tools/read_fs.c b/src/others/squashfs-3.2-r2-hg612-lzma/squashfs3.2-r2/squashfs-tools/read_fs.c
+index 0194d99..06c57f2 100644
+--- a/src/others/squashfs-3.2-r2-hg612-lzma/squashfs3.2-r2/squashfs-tools/read_fs.c
++++ b/src/others/squashfs-3.2-r2-hg612-lzma/squashfs3.2-r2/squashfs-tools/read_fs.c
+@@ -63,7 +63,7 @@ extern int add_file(long long, long long, long long, unsigned int *, int, unsign
+ 						fprintf(stderr, s, ## args); \
+ 					} while(0)
+ 
+-int swap;
++extern int swap;
+ extern struct sqlzma_un un;
+ 
+ int read_block(int fd, long long start, long long *next, unsigned char *block, squashfs_super_block *sBlk)
+diff --git a/src/others/squashfs-3.2-r2-lzma/squashfs3.2-r2/squashfs-tools/mksquashfs.c b/src/others/squashfs-3.2-r2-lzma/squashfs3.2-r2/squashfs-tools/mksquashfs.c
+index b68d9d3..fbd197f 100644
+--- a/src/others/squashfs-3.2-r2-lzma/squashfs3.2-r2/squashfs-tools/mksquashfs.c
++++ b/src/others/squashfs-3.2-r2-lzma/squashfs3.2-r2/squashfs-tools/mksquashfs.c
+@@ -2209,7 +2209,7 @@ struct inode_info *lookup_inode(struct stat *buf)
+ }
+ 
+ 
+-inline void add_dir_entry(char *name, char *pathname, struct dir_info *sub_dir, struct inode_info *inode_info, void *data, struct dir_info *dir)
++static inline void add_dir_entry(char *name, char *pathname, struct dir_info *sub_dir, struct inode_info *inode_info, void *data, struct dir_info *dir)
+ {
+ 	if((dir->count % DIR_ENTRIES) == 0)
+ 		if((dir->list = realloc(dir->list, (dir->count + DIR_ENTRIES) * sizeof(struct dir_ent *))) == NULL)
+diff --git a/src/others/squashfs-3.2-r2-lzma/squashfs3.2-r2/squashfs-tools/read_fs.c b/src/others/squashfs-3.2-r2-lzma/squashfs3.2-r2/squashfs-tools/read_fs.c
+index 0194d99..06c57f2 100644
+--- a/src/others/squashfs-3.2-r2-lzma/squashfs3.2-r2/squashfs-tools/read_fs.c
++++ b/src/others/squashfs-3.2-r2-lzma/squashfs3.2-r2/squashfs-tools/read_fs.c
+@@ -63,7 +63,7 @@ extern int add_file(long long, long long, long long, unsigned int *, int, unsign
+ 						fprintf(stderr, s, ## args); \
+ 					} while(0)
+ 
+-int swap;
++extern int swap;
+ extern struct sqlzma_un un;
+ 
+ int read_block(int fd, long long start, long long *next, unsigned char *block, squashfs_super_block *sBlk)
+diff --git a/src/others/squashfs-3.2-r2-rtn12/mksquashfs.c b/src/others/squashfs-3.2-r2-rtn12/mksquashfs.c
+index f2c896e..9a54b34 100644
+--- a/src/others/squashfs-3.2-r2-rtn12/mksquashfs.c
++++ b/src/others/squashfs-3.2-r2-rtn12/mksquashfs.c
+@@ -2234,7 +2234,7 @@ struct inode_info *lookup_inode(struct stat *buf)
+ }
+ 
+ 
+-inline void add_dir_entry(char *name, char *pathname, struct dir_info *sub_dir, struct inode_info *inode_info, void *data, struct dir_info *dir)
++static inline void add_dir_entry(char *name, char *pathname, struct dir_info *sub_dir, struct inode_info *inode_info, void *data, struct dir_info *dir)
+ {
+ 	if((dir->count % DIR_ENTRIES) == 0)
+ 		if((dir->list = realloc(dir->list, (dir->count + DIR_ENTRIES) * sizeof(struct dir_ent *))) == NULL)
+diff --git a/src/others/squashfs-3.2-r2-rtn12/read_fs.c b/src/others/squashfs-3.2-r2-rtn12/read_fs.c
+index 8c0b10a..f3b3d27 100644
+--- a/src/others/squashfs-3.2-r2-rtn12/read_fs.c
++++ b/src/others/squashfs-3.2-r2-rtn12/read_fs.c
+@@ -63,7 +63,7 @@ extern int add_file(long long, long long, long long, unsigned int *, int, unsign
+ 						fprintf(stderr, s, ## args); \
+ 					} while(0)
+ 
+-int swap;
++extern int swap;
+ extern int lzma;
+ 
+ int read_block(int fd, long long start, long long *next, unsigned char *block, squashfs_super_block *sBlk)
+diff --git a/src/others/squashfs-3.2-r2-wnr1000/mksquashfs.c b/src/others/squashfs-3.2-r2-wnr1000/mksquashfs.c
+index 20310d2..02aee61 100755
+--- a/src/others/squashfs-3.2-r2-wnr1000/mksquashfs.c
++++ b/src/others/squashfs-3.2-r2-wnr1000/mksquashfs.c
+@@ -2233,7 +2233,7 @@ struct inode_info *lookup_inode(struct stat *buf)
+ }
+ 
+ 
+-inline void add_dir_entry(char *name, char *pathname, struct dir_info *sub_dir, struct inode_info *inode_info, void *data, struct dir_info *dir)
++static inline void add_dir_entry(char *name, char *pathname, struct dir_info *sub_dir, struct inode_info *inode_info, void *data, struct dir_info *dir)
+ {
+ 	if((dir->count % DIR_ENTRIES) == 0)
+ 		if((dir->list = realloc(dir->list, (dir->count + DIR_ENTRIES) * sizeof(struct dir_ent *))) == NULL)
+diff --git a/src/others/squashfs-3.2-r2-wnr1000/read_fs.c b/src/others/squashfs-3.2-r2-wnr1000/read_fs.c
+index c0ac5e7..7456600 100755
+--- a/src/others/squashfs-3.2-r2-wnr1000/read_fs.c
++++ b/src/others/squashfs-3.2-r2-wnr1000/read_fs.c
+@@ -62,7 +62,7 @@ extern int add_file(long long, long long, long long, unsigned int *, int, unsign
+ 						fprintf(stderr, s, ## args); \
+ 					} while(0)
+ 
+-int swap;
++extern int swap;
+ extern int lzma;
+ 
+ int read_block(int fd, long long start, long long *next, unsigned char *block, squashfs_super_block *sBlk)
+diff --git a/src/others/squashfs-3.2-r2/mksquashfs.c b/src/others/squashfs-3.2-r2/mksquashfs.c
+index cc275f6..2ac9908 100644
+--- a/src/others/squashfs-3.2-r2/mksquashfs.c
++++ b/src/others/squashfs-3.2-r2/mksquashfs.c
+@@ -2211,7 +2211,7 @@ struct inode_info *lookup_inode(struct stat *buf)
+ }
+ 
+ 
+-inline void add_dir_entry(char *name, char *pathname, struct dir_info *sub_dir, struct inode_info *inode_info, void *data, struct dir_info *dir)
++static inline void add_dir_entry(char *name, char *pathname, struct dir_info *sub_dir, struct inode_info *inode_info, void *data, struct dir_info *dir)
+ {
+ 	if((dir->count % DIR_ENTRIES) == 0)
+ 		if((dir->list = realloc(dir->list, (dir->count + DIR_ENTRIES) * sizeof(struct dir_ent *))) == NULL)
+diff --git a/src/others/squashfs-3.2-r2/read_fs.c b/src/others/squashfs-3.2-r2/read_fs.c
+index 7cd758e..43f5b25 100644
+--- a/src/others/squashfs-3.2-r2/read_fs.c
++++ b/src/others/squashfs-3.2-r2/read_fs.c
+@@ -61,7 +61,7 @@ extern int add_file(long long, long long, long long, unsigned int *, int, unsign
+ 						fprintf(stderr, s, ## args); \
+ 					} while(0)
+ 
+-int swap;
++extern int swap;
+ 
+ int read_block(int fd, long long start, long long *next, unsigned char *block, squashfs_super_block *sBlk)
+ {
+diff --git a/src/others/squashfs-3.3-grml-lzma/squashfs3.3/squashfs-tools/mksquashfs.c b/src/others/squashfs-3.3-grml-lzma/squashfs3.3/squashfs-tools/mksquashfs.c
+index f03bf09..ee6263c 100644
+--- a/src/others/squashfs-3.3-grml-lzma/squashfs3.3/squashfs-tools/mksquashfs.c
++++ b/src/others/squashfs-3.3-grml-lzma/squashfs3.3/squashfs-tools/mksquashfs.c
+@@ -2348,7 +2348,7 @@ struct inode_info *lookup_inode(struct stat *buf)
+ }
+ 
+ 
+-inline void add_dir_entry(char *name, char *pathname, struct dir_info *sub_dir, struct inode_info *inode_info, void *data, struct dir_info *dir)
++static inline void add_dir_entry(char *name, char *pathname, struct dir_info *sub_dir, struct inode_info *inode_info, void *data, struct dir_info *dir)
+ {
+ 	if((dir->count % DIR_ENTRIES) == 0)
+ 		if((dir->list = realloc(dir->list, (dir->count + DIR_ENTRIES) * sizeof(struct dir_ent *))) == NULL)
+diff --git a/src/others/squashfs-3.3-grml-lzma/squashfs3.3/squashfs-tools/read_fs.c b/src/others/squashfs-3.3-grml-lzma/squashfs3.3/squashfs-tools/read_fs.c
+index 6cb3da2..1f768cc 100644
+--- a/src/others/squashfs-3.3-grml-lzma/squashfs3.3/squashfs-tools/read_fs.c
++++ b/src/others/squashfs-3.3-grml-lzma/squashfs3.3/squashfs-tools/read_fs.c
+@@ -63,7 +63,7 @@ extern int add_file(long long, long long, long long, unsigned int *, int, unsign
+ 						fprintf(stderr, s, ## args); \
+ 					} while(0)
+ 
+-int swap;
++extern int swap;
+ extern struct sqlzma_un un;
+ 
+ int read_block(int fd, long long start, long long *next, unsigned char *block, squashfs_super_block *sBlk)
+diff --git a/src/others/squashfs-3.3-lzma/squashfs3.3/squashfs-tools/mksquashfs.c b/src/others/squashfs-3.3-lzma/squashfs3.3/squashfs-tools/mksquashfs.c
+index 9ef85ba..ee814d3 100644
+--- a/src/others/squashfs-3.3-lzma/squashfs3.3/squashfs-tools/mksquashfs.c
++++ b/src/others/squashfs-3.3-lzma/squashfs3.3/squashfs-tools/mksquashfs.c
+@@ -2355,7 +2355,7 @@ struct inode_info *lookup_inode(struct stat *buf)
+ }
+ 
+ 
+-inline void add_dir_entry(char *name, char *pathname, struct dir_info *sub_dir, struct inode_info *inode_info, void *data, struct dir_info *dir)
++static inline void add_dir_entry(char *name, char *pathname, struct dir_info *sub_dir, struct inode_info *inode_info, void *data, struct dir_info *dir)
+ {
+ 	if((dir->count % DIR_ENTRIES) == 0)
+ 		if((dir->list = realloc(dir->list, (dir->count + DIR_ENTRIES) * sizeof(struct dir_ent *))) == NULL)
+diff --git a/src/others/squashfs-3.3-lzma/squashfs3.3/squashfs-tools/read_fs.c b/src/others/squashfs-3.3-lzma/squashfs3.3/squashfs-tools/read_fs.c
+index a43dbf2..882fa92 100644
+--- a/src/others/squashfs-3.3-lzma/squashfs3.3/squashfs-tools/read_fs.c
++++ b/src/others/squashfs-3.3-lzma/squashfs3.3/squashfs-tools/read_fs.c
+@@ -63,7 +63,7 @@ extern int add_file(long long, long long, long long, unsigned int *, int, unsign
+ 						fprintf(stderr, s, ## args); \
+ 					} while(0)
+ 
+-int swap;
++extern int swap;
+ extern struct sqlzma_un un;
+ 
+ int read_block(int fd, long long start, long long *next, unsigned char *block, squashfs_super_block *sBlk)
+diff --git a/src/others/squashfs-3.3/mksquashfs.c b/src/others/squashfs-3.3/mksquashfs.c
+index 13429d3..3733452 100644
+--- a/src/others/squashfs-3.3/mksquashfs.c
++++ b/src/others/squashfs-3.3/mksquashfs.c
+@@ -2353,7 +2353,7 @@ struct inode_info *lookup_inode(struct stat *buf)
+ }
+ 
+ 
+-inline void add_dir_entry(char *name, char *pathname, struct dir_info *sub_dir, struct inode_info *inode_info, void *data, struct dir_info *dir)
++static inline void add_dir_entry(char *name, char *pathname, struct dir_info *sub_dir, struct inode_info *inode_info, void *data, struct dir_info *dir)
+ {
+ 	if((dir->count % DIR_ENTRIES) == 0)
+ 		if((dir->list = realloc(dir->list, (dir->count + DIR_ENTRIES) * sizeof(struct dir_ent *))) == NULL)
+diff --git a/src/others/squashfs-3.3/read_fs.c b/src/others/squashfs-3.3/read_fs.c
+index ee54e02..24050f3 100644
+--- a/src/others/squashfs-3.3/read_fs.c
++++ b/src/others/squashfs-3.3/read_fs.c
+@@ -61,7 +61,7 @@ extern int add_file(long long, long long, long long, unsigned int *, int, unsign
+ 						fprintf(stderr, s, ## args); \
+ 					} while(0)
+ 
+-int swap;
++extern int swap;
+ 
+ int read_block(int fd, long long start, long long *next, unsigned char *block, squashfs_super_block *sBlk)
+ {
+diff --git a/src/others/squashfs-3.4-cisco/squashfs-tools/mksquashfs.c b/src/others/squashfs-3.4-cisco/squashfs-tools/mksquashfs.c
+index 6ef7984..da179de 100644
+--- a/src/others/squashfs-3.4-cisco/squashfs-tools/mksquashfs.c
++++ b/src/others/squashfs-3.4-cisco/squashfs-tools/mksquashfs.c
+@@ -2718,7 +2718,7 @@ struct inode_info *lookup_inode(struct stat *buf)
+ }
+ 
+ 
+-inline void add_dir_entry(char *name, char *pathname, struct dir_info *sub_dir, struct inode_info *inode_info, void *data, struct dir_info *dir)
++static inline void add_dir_entry(char *name, char *pathname, struct dir_info *sub_dir, struct inode_info *inode_info, void *data, struct dir_info *dir)
+ {
+ 	if((dir->count % DIR_ENTRIES) == 0)
+ 		if((dir->list = realloc(dir->list, (dir->count + DIR_ENTRIES) * sizeof(struct dir_ent *))) == NULL)
+diff --git a/src/others/squashfs-3.4-cisco/squashfs-tools/read_fs.c b/src/others/squashfs-3.4-cisco/squashfs-tools/read_fs.c
+index 335e7fd..65c0ac2 100644
+--- a/src/others/squashfs-3.4-cisco/squashfs-tools/read_fs.c
++++ b/src/others/squashfs-3.4-cisco/squashfs-tools/read_fs.c
+@@ -66,7 +66,7 @@ extern int add_file(long long, long long, long long, unsigned int *, int, unsign
+ 						fprintf(stderr, s, ## args); \
+ 					} while(0)
+ 
+-int swap;
++extern int swap;
+ extern int gLzmaEnable;
+ 
+ int read_block(int fd, long long start, long long *next, unsigned char *block, squashfs_super_block *sBlk)
+diff --git a/src/others/squashfs-3.4-nb4/squashfs3.4/squashfs-tools/mksquashfs.c b/src/others/squashfs-3.4-nb4/squashfs3.4/squashfs-tools/mksquashfs.c
+index 084e070..ad85931 100644
+--- a/src/others/squashfs-3.4-nb4/squashfs3.4/squashfs-tools/mksquashfs.c
++++ b/src/others/squashfs-3.4-nb4/squashfs3.4/squashfs-tools/mksquashfs.c
+@@ -2704,7 +2704,7 @@ struct inode_info *lookup_inode(struct stat *buf)
+ }
+ 
+ 
+-inline void add_dir_entry(char *name, char *pathname, struct dir_info *sub_dir, struct inode_info *inode_info, void *data, struct dir_info *dir)
++static inline void add_dir_entry(char *name, char *pathname, struct dir_info *sub_dir, struct inode_info *inode_info, void *data, struct dir_info *dir)
+ {
+ 	if((dir->count % DIR_ENTRIES) == 0)
+ 		if((dir->list = realloc(dir->list, (dir->count + DIR_ENTRIES) * sizeof(struct dir_ent *))) == NULL)
+diff --git a/src/others/squashfs-3.4-nb4/squashfs3.4/squashfs-tools/read_fs.c b/src/others/squashfs-3.4-nb4/squashfs3.4/squashfs-tools/read_fs.c
+index 2109311..f2a6bbc 100644
+--- a/src/others/squashfs-3.4-nb4/squashfs3.4/squashfs-tools/read_fs.c
++++ b/src/others/squashfs-3.4-nb4/squashfs3.4/squashfs-tools/read_fs.c
+@@ -63,7 +63,7 @@ extern int add_file(long long, long long, long long, unsigned int *, int, unsign
+ 						fprintf(stderr, s, ## args); \
+ 					} while(0)
+ 
+-int swap;
++extern int swap;
+ extern struct sqlzma_un un;
+ 
+ int read_block(int fd, long long start, long long *next, unsigned char *block, squashfs_super_block *sBlk)
+diff --git a/src/others/squashfs-3.4-nb4/squashfs3.4/squashfs-tools/unsquashfs.c b/src/others/squashfs-3.4-nb4/squashfs3.4/squashfs-tools/unsquashfs.c
+index a11429a..fa493c1 100644
+--- a/src/others/squashfs-3.4-nb4/squashfs3.4/squashfs-tools/unsquashfs.c
++++ b/src/others/squashfs-3.4-nb4/squashfs3.4/squashfs-tools/unsquashfs.c
+@@ -48,7 +48,7 @@
+ #include <sys/ioctl.h>
+ #include <sys/time.h>
+ 
+-#include <sys/sysctl.h>
++
+ 
+ #ifndef linux
+ #define __BYTE_ORDER BYTE_ORDER
+diff --git a/src/others/squashfs-4.0-lzma/mksquashfs.c b/src/others/squashfs-4.0-lzma/mksquashfs.c
+index 81684a4..50d9d8b 100644
+--- a/src/others/squashfs-4.0-lzma/mksquashfs.c
++++ b/src/others/squashfs-4.0-lzma/mksquashfs.c
+@@ -3129,7 +3129,7 @@ struct inode_info *lookup_inode(struct stat *buf)
+ }
+ 
+ 
+-inline void add_dir_entry(char *name, char *pathname, struct dir_info *sub_dir,
++static inline void add_dir_entry(char *name, char *pathname, struct dir_info *sub_dir,
+ 	struct inode_info *inode_info, void *data, struct dir_info *dir)
+ {
+ 	if((dir->count % DIR_ENTRIES) == 0) {
+diff --git a/src/others/squashfs-4.0-realtek/mksquashfs.c b/src/others/squashfs-4.0-realtek/mksquashfs.c
+index bf0a47b..41da499 100644
+--- a/src/others/squashfs-4.0-realtek/mksquashfs.c
++++ b/src/others/squashfs-4.0-realtek/mksquashfs.c
+@@ -3177,7 +3177,7 @@ struct inode_info *lookup_inode(struct stat *buf)
+ }
+ 
+ 
+-inline void add_dir_entry(char *name, char *pathname, struct dir_info *sub_dir,
++static inline void add_dir_entry(char *name, char *pathname, struct dir_info *sub_dir,
+ 	struct inode_info *inode_info, struct dir_info *dir)
+ {
+ 	if((dir->count % DIR_ENTRIES) == 0) {
+diff --git a/src/others/squashfs-4.2-official/mksquashfs.c b/src/others/squashfs-4.2-official/mksquashfs.c
+index f2d9a02..8fcc666 100644
+--- a/src/others/squashfs-4.2-official/mksquashfs.c
++++ b/src/others/squashfs-4.2-official/mksquashfs.c
+@@ -3340,7 +3340,7 @@ struct inode_info *lookup_inode(struct stat *buf)
+ }
+ 
+ 
+-inline void add_dir_entry(char *name, char *pathname, struct dir_info *sub_dir,
++static inline void add_dir_entry(char *name, char *pathname, struct dir_info *sub_dir,
+ 	struct inode_info *inode_info, struct dir_info *dir)
+ {
+ 	if((dir->count % DIR_ENTRIES) == 0) {
+diff --git a/src/others/squashfs-4.2/squashfs-tools/mksquashfs.c b/src/others/squashfs-4.2/squashfs-tools/mksquashfs.c
+index f9d3bc8..a2535b1 100644
+--- a/src/others/squashfs-4.2/squashfs-tools/mksquashfs.c
++++ b/src/others/squashfs-4.2/squashfs-tools/mksquashfs.c
+@@ -3355,7 +3355,7 @@ struct inode_info *lookup_inode(struct stat *buf)
+ }
+ 
+ 
+-inline void add_dir_entry(char *name, char *pathname, struct dir_info *sub_dir,
++static inline void add_dir_entry(char *name, char *pathname, struct dir_info *sub_dir,
+ 	struct inode_info *inode_info, struct dir_info *dir)
+ {
+ 	if((dir->count % DIR_ENTRIES) == 0) {
+diff --git a/src/squashfs-2.1-r2/read_fs.c b/src/squashfs-2.1-r2/read_fs.c
+index e144b48..ac6205b 100644
+--- a/src/squashfs-2.1-r2/read_fs.c
++++ b/src/squashfs-2.1-r2/read_fs.c
+@@ -48,7 +48,7 @@ extern int add_file(int, int, unsigned int *, int, unsigned int, int, int);
+ 
+ #define ERROR(s, args...)		fprintf(stderr, s, ## args)
+ 
+-int swap;
++extern int swap;
+ 
+ int read_block(int fd, int start, int *next, unsigned char *block, squashfs_super_block *sBlk)
+ {
+diff --git a/src/squashfs-3.0-lzma-damn-small-variant/mksquashfs.c b/src/squashfs-3.0-lzma-damn-small-variant/mksquashfs.c
+index 57ba67e..17c9990 100644
+--- a/src/squashfs-3.0-lzma-damn-small-variant/mksquashfs.c
++++ b/src/squashfs-3.0-lzma-damn-small-variant/mksquashfs.c
+@@ -1371,7 +1371,7 @@ struct inode_info *lookup_inode(struct stat *buf)
+ }
+ 
+ 
+-inline void add_dir_entry(char *name, char *pathname, struct dir_info *sub_dir, struct inode_info *inode_info, void *data, struct dir_info *dir)
++static inline void add_dir_entry(char *name, char *pathname, struct dir_info *sub_dir, struct inode_info *inode_info, void *data, struct dir_info *dir)
+ {
+ 	if((dir->count % DIR_ENTRIES) == 0)
+ 		if((dir->list = realloc(dir->list, (dir->count + DIR_ENTRIES) * sizeof(struct dir_ent *))) == NULL)
+diff --git a/src/squashfs-3.0-lzma-damn-small-variant/read_fs.c b/src/squashfs-3.0-lzma-damn-small-variant/read_fs.c
+index 2041592..9cfad4a 100644
+--- a/src/squashfs-3.0-lzma-damn-small-variant/read_fs.c
++++ b/src/squashfs-3.0-lzma-damn-small-variant/read_fs.c
+@@ -61,7 +61,7 @@ extern int add_file(long long, long long, unsigned int *, int, unsigned int, int
+ 						fprintf(stderr, s, ## args); \
+ 					} while(0)
+ 
+-int swap;
++extern int swap;
+ 
+ int read_block(int fd, long long start, long long *next, unsigned char *block, squashfs_super_block *sBlk)
+ {
+diff --git a/src/squashfs-3.0/mksquashfs.c b/src/squashfs-3.0/mksquashfs.c
+index 2b91cd6..73d3f01 100644
+--- a/src/squashfs-3.0/mksquashfs.c
++++ b/src/squashfs-3.0/mksquashfs.c
+@@ -1378,7 +1378,7 @@ struct inode_info *lookup_inode(struct stat *buf)
+ }
+ 
+ 
+-inline void add_dir_entry(char *name, char *pathname, struct dir_info *sub_dir, struct inode_info *inode_info, void *data, struct dir_info *dir)
++static inline void add_dir_entry(char *name, char *pathname, struct dir_info *sub_dir, struct inode_info *inode_info, void *data, struct dir_info *dir)
+ {
+ 	if((dir->count % DIR_ENTRIES) == 0)
+ 		if((dir->list = realloc(dir->list, (dir->count + DIR_ENTRIES) * sizeof(struct dir_ent *))) == NULL)
+diff --git a/src/squashfs-3.0/read_fs.c b/src/squashfs-3.0/read_fs.c
+index 2041592..9cfad4a 100644
+--- a/src/squashfs-3.0/read_fs.c
++++ b/src/squashfs-3.0/read_fs.c
+@@ -61,7 +61,7 @@ extern int add_file(long long, long long, unsigned int *, int, unsigned int, int
+ 						fprintf(stderr, s, ## args); \
+ 					} while(0)
+ 
+-int swap;
++extern int swap;
+ 
+ int read_block(int fd, long long start, long long *next, unsigned char *block, squashfs_super_block *sBlk)
+ {
+diff --git a/src/webcomp-tools/common.c b/src/webcomp-tools/common.c
+index 359a549..1de9448 100644
+--- a/src/webcomp-tools/common.c
++++ b/src/webcomp-tools/common.c
+@@ -10,6 +10,8 @@
+ #include <elf.h>
+ #include "common.h"
+ 
++struct global globals;
++
+ /* Given the physical and virtual section loading addresses, convert a virtual address to a physical file offset */
+ uint32_t file_offset(uint32_t address, uint32_t virtual, uint32_t physical)
+ {
+diff --git a/src/webcomp-tools/common.h b/src/webcomp-tools/common.h
+index 303c00d..17b330a 100644
+--- a/src/webcomp-tools/common.h
++++ b/src/webcomp-tools/common.h
+@@ -38,7 +38,7 @@ struct entry_info
+ 	struct new_file_entry *new_entry;
+ };
+ 
+-struct global
++extern struct global
+ {
+ 	int endianess;
+ 	int use_new_format;

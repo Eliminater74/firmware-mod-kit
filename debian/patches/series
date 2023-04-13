@@ -1,1 +1,2 @@
 switch-to-python3.patch
+fix-ftbfs-with-gcc10.patch
