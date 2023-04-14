@@ -1,2 +1,9 @@
 include:
   - https://gitlab.com/kalilinux/tools/kali-ci-pipeline/raw/master/recipes/kali.yml
+
+variables:
+  # The package includes amd64/i386 binaries which.. obviously don't build on
+  # arm systems, so disable arm builds in the CI.
+  SALSA_CI_DISABLE_BUILD_PACKAGE_ARM64: 1
+  SALSA_CI_DISABLE_BUILD_PACKAGE_ARMEL: 1
+  SALSA_CI_DISABLE_BUILD_PACKAGE_ARMHF: 1
