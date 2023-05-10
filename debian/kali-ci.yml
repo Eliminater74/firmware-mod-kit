@@ -7,3 +7,7 @@ variables:
   SALSA_CI_DISABLE_BUILD_PACKAGE_ARM64: 1
   SALSA_CI_DISABLE_BUILD_PACKAGE_ARMEL: 1
   SALSA_CI_DISABLE_BUILD_PACKAGE_ARMHF: 1
+
+piuparts:
+  # Package writes to /opt, so allow piuparts to fail as this is frowned upon.
+  allow_failure: true
