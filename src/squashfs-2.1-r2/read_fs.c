@@ -48,7 +48,12 @@ extern int add_file(int, int, unsigned int *, int, unsigned int, int, int);
 
 #define ERROR(s, args...)		fprintf(stderr, s, ## args)
 
-int swap;
+#include "globals.h"
+
+static int swap;
+int silent = TRUE; // Define silent here
+
+// Rest of the code...
 
 int read_block(int fd, int start, int *next, unsigned char *block, squashfs_super_block *sBlk)
 {

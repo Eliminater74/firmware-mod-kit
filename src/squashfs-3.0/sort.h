@@ -1,4 +1,4 @@
-#ifndef SORT_H 
+#ifndef SORT_H
 #define SORT_H
 
 /*
@@ -24,33 +24,40 @@
  * sort.h
  */
 
+#include "squashfs_fs.h"
+#include <dirent.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <unistd.h>
+
 struct dir_info {
-	char			*pathname;
-	unsigned int		count;
-	unsigned int		directory_count;
-	unsigned int		current_count;
-	unsigned int		byte_count;
-	char			dir_is_ldir;
-	struct dir_ent		*dir_ent;
-	struct dir_ent		**list;
-	DIR			*linuxdir;
+    char* pathname;
+    unsigned int count;
+    unsigned int directory_count;
+    unsigned int current_count;
+    unsigned int byte_count;
+    char dir_is_ldir;
+    struct dir_ent* dir_ent;
+    struct dir_ent** list;
+    DIR* linuxdir;
 };
 
 struct dir_ent {
-	char			*name;
-	char			*pathname;
-	struct inode_info	*inode;
-	struct dir_info		*dir;
-	struct dir_info		*our_dir;
-	struct old_root_entry_info *data;
+    char* name;
+    char* pathname;
+    struct inode_info* inode;
+    struct dir_info* dir;
+    struct dir_info* our_dir;
+    struct old_root_entry_info* data;
 };
 
 struct inode_info {
-	unsigned int		nlink;
-	struct stat		buf;
-	squashfs_inode		inode;
-	unsigned int		type;
-	unsigned int		inode_number;
-	struct inode_info	*next;
+    unsigned int nlink;
+    struct stat buf;
+    squashfs_inode inode;
+    unsigned int type;
+    unsigned int inode_number;
+    struct inode_info* next;
 };
+
 #endif
